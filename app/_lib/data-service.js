@@ -83,7 +83,7 @@ export async function getBookings(guestId) {
     .from("bookings")
     // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)"
+      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)",
     )
     .eq("guestId", guestId)
     .order("startDate");
@@ -138,19 +138,19 @@ export async function getSettings() {
 }
 
 export async function getCountries() {
-  try {
-    const res = await fetch(
-      "https://restcountries.com/v2/all?fields=name,flag"
-    );
-    const countries = await res.json();
-    return countries;
-  } catch {
-    throw new Error("Could not fetch countries");
-  }
-}
+  const res = await fetch(
+    "https://restcountries.com/v3.1/all?fields=name,flags",
+  );
 
-/////////////
-// CREATE
+  console.log("Status:", res.status);
+  console.log("Content-Type:", res.headers.get("content-type"));
+
+  const text = await res.text();
+
+  console.log("Response:", text);
+
+  return [];
+}
 
 export async function createGuest(newGuest) {
   const { data, error } = await supabase.from("guests").insert([newGuest]);
